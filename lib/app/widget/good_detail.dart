@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'gallery_photo_view_wrapper.dart';
-import 'package:zdk_app/app/screen/chat_screen.dart';
-import 'package:zdk_app/app/screen/buy_screen.dart';
 
 //产品详情
 class GoodInfo extends StatefulWidget {
@@ -170,47 +168,14 @@ class _GoodInfoState extends State<GoodInfo> {
 
   _widget_bt() {
     List<Widget> list = <Widget>[];
-
-    Color _icon_favorite_color = Colors.grey[800];
-    Icon _icon_favorite = Icon(
-      Icons.favorite_border,
-      color: _icon_favorite_color,
-    );
-
-    list.add(
-      FlatButton.icon(
-        icon: _icon_favorite,
-        label: Text("想要"),
-        onPressed: () {
-          // Perform some action
-        },
-      ),
-    );
-    list.add(Expanded(child: SizedBox())); // 占位
     list.add(RaisedButton(
       textColor: Colors.white,
-      color: Colors.orange[800],
-      child: Text('聊一聊'),
+      color: Colors.red[500],
+      child: Text('立即购买'),
       onPressed: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-          return new ChatScreen();
-        }));
+        //todo: 弹出口令界面
       },
     ));
-    list.add(Container(
-        margin: EdgeInsets.only(left: 8),
-        child: RaisedButton(
-          textColor: Colors.white,
-          color: Colors.red[500],
-          child: Text('立即购买'),
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-              return new BuyScreen(
-                goodModel: null,
-              );
-            }));
-          },
-        )));
     return BottomAppBar(
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8),

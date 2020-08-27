@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:zdk_app/app/screen/chat_screen.dart';
 
 class MessageScreen extends StatefulWidget {
   @override
@@ -45,11 +44,7 @@ class _MessageScreenState extends State<MessageScreen>
     super.dispose();
   }
 
-  void _onTap(String type) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-      return new ChatScreen();
-    }));
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +72,7 @@ class _MessageScreenState extends State<MessageScreen>
   }
 
   Widget _createItem_sys() {
-    Widget widget = null;
+    Widget widget;
 
     widget = Container(
         padding: EdgeInsets.only(left: 16, bottom: 16),
@@ -125,7 +120,7 @@ class _MessageScreenState extends State<MessageScreen>
                           ],
                         ),
                         onTap: () {
-                          _onTap("");
+                          //todo: 展现系统消息详情页.
                         },
                       ),
                     ),
@@ -140,7 +135,7 @@ class _MessageScreenState extends State<MessageScreen>
   }
 
   Widget _createItem(int index) {
-    Widget widget = null;
+    Widget widget;
 
     if (index % 3 == 1) {
       return _createItem_sys();
@@ -163,7 +158,7 @@ class _MessageScreenState extends State<MessageScreen>
             Expanded(
                 child: GestureDetector(
                     onTap: () {
-                      _onTap("我是数据");
+                      //todo: 消息详情页
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
