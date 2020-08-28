@@ -26,6 +26,11 @@ class _FeaturePageState extends State<FeaturePage>
 
   @override
   Widget build(BuildContext context) {
-    return null;
+     return Scaffold(
+       appBar: AppBar(
+
+       ),
+
+     );
   }
 }
