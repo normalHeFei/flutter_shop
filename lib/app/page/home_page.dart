@@ -3,8 +3,7 @@ import 'package:zdk_app/app/widget/search_widget.dart';
 import '../widget/good_list.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key key, this.data}) : super(key: key);
-  final String data;
+  const HomeScreen({Key key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
