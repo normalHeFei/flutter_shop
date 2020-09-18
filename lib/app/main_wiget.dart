@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:zdk_app/app/page/home_page.dart';
-import 'package:zdk_app/app/page/selfboss_page.dart';
-import 'package:zdk_app/app/page/mine_page.dart';
+import 'package:flutter_screenutil/screenutil.dart';
+import 'mainpage/mine_page.dart';
+
+import 'mainpage/home_page.dart';
+import 'mainpage/selfboss_page.dart';
 
 class MainWidget extends StatefulWidget {
   @override
@@ -10,7 +12,11 @@ class MainWidget extends StatefulWidget {
 
 class _MainWidgetState extends State<MainWidget>
     with SingleTickerProviderStateMixin {
-  List<StatefulWidget> _pages = [HomeScreen(), MessageScreen(), MineScreen()];
+  List<StatefulWidget> _pages = [
+    HomePage(),
+    SelfBossPage(),
+    MinePage()
+  ];
 
   final _bottomNavigationTextColor = Colors.black; // 导航字体颜色
   final _bottomNavigationIconColor = Colors.black; // 导航默认图标颜色
@@ -30,6 +36,8 @@ class _MainWidgetState extends State<MainWidget>
 
   @override
   Widget build(BuildContext context) {
+    //初始化设计稿长宽,设置参照系
+    ScreenUtil.init(context, width: 600, height: 1071);
     return Scaffold(
       body: PageView(
         controller: _controller,
@@ -56,8 +64,8 @@ class _MainWidgetState extends State<MainWidget>
                 Text("首页", style: TextStyle(color: _bottomNavigationTextColor)),
           ),
           BottomNavigationBarItem(
-            activeIcon:
-                Icon(Icons.shopping_cart, color: _bottomNavigationActiveIconColor),
+            activeIcon: Icon(Icons.shopping_cart,
+                color: _bottomNavigationActiveIconColor),
             icon: Icon(Icons.shopping_cart, color: _bottomNavigationIconColor),
             title:
                 Text("自营", style: TextStyle(color: _bottomNavigationTextColor)),

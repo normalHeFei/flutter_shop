@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class MessageScreen extends StatefulWidget {
+class SelfBossPage extends StatefulWidget {
   @override
-  _MessageScreenState createState() => _MessageScreenState();
+  _SelfBossPageState createState() => _SelfBossPageState();
 }
 
-class _MessageScreenState extends State<MessageScreen>
+class _SelfBossPageState extends State<SelfBossPage>
     with AutomaticKeepAliveClientMixin {
   @override
   // TODO: implement wantKeepAlive

@@ -2,24 +2,25 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-class CustomBanner extends StatefulWidget {
-  final List<String> _images;
+class WidgetBanner extends StatefulWidget {
+  final List<String> imageUrls;
   final double height;
   final ValueChanged<int> onTap;
   final Curve curve;
 
-  CustomBanner(
-      this._images, {
-        this.height = 200,
-        this.onTap,
-        this.curve = Curves.linear,
-      }) : assert(_images != null);
+  WidgetBanner({
+    this.imageUrls,
+    /// 200
+    this.height,
+    this.onTap,
+    this.curve = Curves.linear,
+  }) : assert(imageUrls != null);
 
   @override
-  _CustomBannerState createState() => _CustomBannerState();
+  _WidgetBannerState createState() => _WidgetBannerState();
 }
 
-class _CustomBannerState extends State<CustomBanner> {
+class _WidgetBannerState extends State<WidgetBanner> {
   PageController _pageController;
   int _curIndex;
   Timer _timer;
@@ -27,7 +28,7 @@ class _CustomBannerState extends State<CustomBanner> {
   @override
   void initState() {
     super.initState();
-    _curIndex = widget._images.length * 5;
+    _curIndex = widget.imageUrls.length * 5;
     _pageController = PageController(initialPage: _curIndex);
     _initTimer();
   }
@@ -44,18 +45,18 @@ class _CustomBannerState extends State<CustomBanner> {
   }
 
   Widget _buildIndicator() {
-    var length = widget._images.length;
+    var length = widget.imageUrls.length;
     return Positioned(
       bottom: 10,
       child: Row(
-        children: widget._images.map((s) {
+        children: widget.imageUrls.map((s) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 3.0),
             child: ClipOval(
               child: Container(
                 width: 8,
                 height: 8,
-                color: s == widget._images[_curIndex % length]
+                color: s == widget.imageUrls[_curIndex % length]
                     ? Colors.white
                     : Colors.grey,
               ),
@@ -67,7 +68,7 @@ class _CustomBannerState extends State<CustomBanner> {
   }
 
   Widget _buildPageView() {
-    var length = widget._images.length;
+    var length = widget.imageUrls.length;
     return Container(
       height: widget.height,
       child: PageView.builder(
@@ -95,7 +96,7 @@ class _CustomBannerState extends State<CustomBanner> {
               );
             },
             child: Image.network(
-              widget._images[index % length],
+              widget.imageUrls[index % length],
               fit: BoxFit.cover,
             ),
           );

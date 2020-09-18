@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'good_list_item.dart';
+import 'widget_good_list_item.dart';
 
 class GoodList extends StatefulWidget {
-  String text;
-  Color color;
-
-  GoodList(this.text, {this.color});
+  GoodList();
 
   _GoodListState createState() => new _GoodListState();
 }
@@ -23,12 +20,13 @@ class _GoodListState extends State<GoodList>
   @override
   Widget build(BuildContext context) {
     return new SafeArea(
-      top: false,
-      bottom: false,
-      child: ListView.separated(
+        top: false,
+        bottom: false,
+        child: ListView.separated(
           itemBuilder: _goodItemBuilder,
           separatorBuilder: (context, index) => Divider(),
-          itemCount: 10),
+          itemCount: 10,
+        )
     );
   }
 

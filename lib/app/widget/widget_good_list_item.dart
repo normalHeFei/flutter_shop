@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'good_detail.dart';
+import 'page_good_detail.dart';
 
 class GoodItem extends StatelessWidget {
   Map _goodModel;

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class MineScreen extends StatefulWidget {
+class MinePage extends StatefulWidget {
   @override
-  _MineScreenState createState() => _MineScreenState();
+  _MinePageState createState() => _MinePageState();
 }
 
-class _MineScreenState extends State<MineScreen>
+class _MinePageState extends State<MinePage>
     with AutomaticKeepAliveClientMixin {
   @override
   // TODO: implement wantKeepAlive
