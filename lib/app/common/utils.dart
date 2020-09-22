@@ -1,0 +1,40 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+class Utils {
+  static FutureBuilder createFutureBuilder(
+      Future future, Function widgetBuilder) {
+    return FutureBuilder(
+      future: future,
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Text("Error: ${snapshot.error}");
+          } else {
+            return widgetBuilder(snapshot.data);
+          }
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
+  static StreamBuilder createStreamBuilder(
+      List<Future> futures, Function widgetBuilder) {
+    return StreamBuilder(
+      stream: Stream.fromFutures(futures),
+      builder: (ctx, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Text("Error: ${snapshot.error}");
+          } else {
+            return widgetBuilder(snapshot.data);
+          }
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
+}

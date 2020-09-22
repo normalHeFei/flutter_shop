@@ -37,15 +37,16 @@ class Api {
   }
 
   Future getBanners() async {
-    return _invoke('shop/listBanners');
+    return _invoke('shop/listBanner');
   }
 
   Future getLms() async {
     return _invoke('shop/lms');
   }
 
-
-  Future geSsrx() async {
+  Future getSsrx() async {
     return _invoke('shop/ssrx');
   }
 }
+
+

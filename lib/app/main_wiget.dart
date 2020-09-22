@@ -12,11 +12,7 @@ class MainWidget extends StatefulWidget {
 
 class _MainWidgetState extends State<MainWidget>
     with SingleTickerProviderStateMixin {
-  List<StatefulWidget> _pages = [
-    HomePage(),
-    SelfBossPage(),
-    MinePage()
-  ];
+  List<StatefulWidget> _pages;
 
   final _bottomNavigationTextColor = Colors.black; // 导航字体颜色
   final _bottomNavigationIconColor = Colors.black; // 导航默认图标颜色
@@ -27,6 +23,12 @@ class _MainWidgetState extends State<MainWidget>
   var _controller = PageController(
     initialPage: 0,
   );
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [HomePage(), SelfBossPage(), MinePage()];
+  }
 
   @override
   void dispose() {

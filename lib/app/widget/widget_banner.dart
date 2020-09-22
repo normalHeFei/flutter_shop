@@ -3,18 +3,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class WidgetBanner extends StatefulWidget {
-  final List<String> imageUrls;
   final double height;
-  final ValueChanged<int> onTap;
   final Curve curve;
+  final Function onclick;
+  final List datas;
 
-  WidgetBanner({
-    this.imageUrls,
-    /// 200
-    this.height,
-    this.onTap,
-    this.curve = Curves.linear,
-  }) : assert(imageUrls != null);
+  WidgetBanner(
+      {this.datas,
+      /// 200
+      this.height,
+      this.curve = Curves.linear,
+      this.onclick})
+      : assert(datas != null),
+        assert(height != null);
 
   @override
   _WidgetBannerState createState() => _WidgetBannerState();
@@ -22,15 +23,15 @@ class WidgetBanner extends StatefulWidget {
 
 class _WidgetBannerState extends State<WidgetBanner> {
   PageController _pageController;
-  int _curIndex;
+  int _currIdx;
   Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    _curIndex = widget.imageUrls.length * 5;
-    _pageController = PageController(initialPage: _curIndex);
-    _initTimer();
+    _currIdx = widget.datas.length;
+    _pageController = PageController(initialPage: 0);
+    _timer = Timer.periodic(Duration(seconds: 3), _scroll);
   }
 
   @override
@@ -45,18 +46,18 @@ class _WidgetBannerState extends State<WidgetBanner> {
   }
 
   Widget _buildIndicator() {
-    var length = widget.imageUrls.length;
+    var length = widget.datas.length;
     return Positioned(
       bottom: 10,
       child: Row(
-        children: widget.imageUrls.map((s) {
+        children: widget.datas.map((s) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 3.0),
             child: ClipOval(
               child: Container(
                 width: 8,
                 height: 8,
-                color: s == widget.imageUrls[_curIndex % length]
+                color: s == widget.datas[_currIdx % length]
                     ? Colors.white
                     : Colors.grey,
               ),
@@ -68,35 +69,18 @@ class _WidgetBannerState extends State<WidgetBanner> {
   }
 
   Widget _buildPageView() {
-    var length = widget.imageUrls.length;
+    var length = widget.datas.length;
     return Container(
       height: widget.height,
       child: PageView.builder(
         controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _curIndex = index;
-            if (index == 0) {
-              _curIndex = length;
-              _changePage();
-            }
-          });
-        },
+        itemCount: length,
         itemBuilder: (context, index) {
           return GestureDetector(
-            onPanDown: (details) {
-              _cancelTimer();
-            },
-            onTap: () {
-              Scaffold.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('当前 page 为 ${index % length}'),
-                  duration: Duration(milliseconds: 500),
-                ),
-              );
-            },
+            onPanDown: (details) {},
+            onTap: widget.onclick(widget.datas[index]),
             child: Image.network(
-              widget.imageUrls[index % length],
+              widget.datas[index % length]['image'] as String,
               fit: BoxFit.cover,
             ),
           );
@@ -105,33 +89,15 @@ class _WidgetBannerState extends State<WidgetBanner> {
     );
   }
 
-  /// 点击到图片的时候取消定时任务
-  _cancelTimer() {
-    if (_timer != null) {
-      _timer.cancel();
-      _timer = null;
-      _initTimer();
+  //定时滚动
+  void _scroll(Timer timer) {
+    if (_currIdx == widget.datas.length) {
+      _currIdx = 0;
     }
-  }
-
-  /// 初始化定时任务
-  _initTimer() {
-    if (_timer == null) {
-      _timer = Timer.periodic(Duration(seconds: 3), (t) {
-        _curIndex++;
-        _pageController.animateToPage(
-          _curIndex,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.linear,
-        );
-      });
+    if(_pageController.positions.length > 0){
+      _pageController.animateToPage(_currIdx,
+          duration: Duration(milliseconds: 300), curve: Curves.linear);
+      _currIdx++;
     }
-  }
-
-  /// 切换页面，并刷新小圆点
-  _changePage() {
-    Timer(Duration(milliseconds: 350), () {
-      _pageController.jumpToPage(_curIndex);
-    });
   }
 }
