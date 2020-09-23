@@ -4,7 +4,7 @@ import 'package:zdk_app/app/common/api.dart';
 import 'package:zdk_app/app/common/utils.dart';
 import 'package:zdk_app/app/widget/widget_banner.dart';
 import 'package:zdk_app/app/widget/widget_cat_tab.dart';
-import 'package:zdk_app/app/widget/widget_item_tabs.dart';
+import 'package:zdk_app/app/widget/widget_horizontal_material_list.dart';
 import 'package:zdk_app/app/widget/widget_search.dart';
 
 class HomePage extends StatefulWidget {
@@ -117,7 +117,11 @@ class _HomePageState extends State<HomePage>
   }
 
   _createSsrx() {
-    return WidgetItemTabs();
+    return WidgetHorizontalMaterialList((){
+        //create page
+       print('点击了 更多');
+
+    });
   }
 
   _createTuiJian() {

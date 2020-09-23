@@ -3,14 +3,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zdk_app/app/common/api.dart';
 import 'package:zdk_app/app/common/utils.dart';
 
-class WidgetItemTabs extends StatefulWidget {
+class WidgetHorizontalMaterialList extends StatefulWidget {
+
+  Function _onTap;
+
+  WidgetHorizontalMaterialList(this._onTap);
+
   @override
   State<StatefulWidget> createState() {
-    return _WidgetItemTabsState();
+    return _WidgetHorizontalMaterialListState();
   }
 }
 
-class _WidgetItemTabsState extends State<WidgetItemTabs> {
+class _WidgetHorizontalMaterialListState extends State<WidgetHorizontalMaterialList> {
   @override
   Widget build(BuildContext context) {
     var screenUtil = ScreenUtil();
@@ -44,14 +49,13 @@ class _WidgetItemTabsState extends State<WidgetItemTabs> {
                 top: screenUtil.setHeight(10),
                 child: Wrap(
                   children: [
-                    Text(
-                      '更多',
-                      maxLines: 1,
-                      style: TextStyle(fontWeight: FontWeight.w100, color: Colors.grey),
-                    ),
-                    Icon(
-                      Icons.more_horiz,
-                      color: Colors.grey,
+                    GestureDetector(
+                      child: Text(
+                        '更多',
+                        maxLines: 1,
+                        style: TextStyle(fontWeight: FontWeight.w100, color: Colors.grey),
+                      ),
+                      onTap: widget._onTap(),
                     )
                   ],
                 ),

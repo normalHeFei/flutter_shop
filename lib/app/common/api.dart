@@ -47,6 +47,12 @@ class Api {
   Future getSsrx() async {
     return _invoke('shop/ssrx');
   }
+
+  Future getMaterialList(Map  params) async{
+     return _invoke('shop/ssrx');
+  }
+
+
 }
 
 

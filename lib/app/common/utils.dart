@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Utils {
   static FutureBuilder createFutureBuilder(
@@ -14,7 +15,11 @@ class Utils {
             return widgetBuilder(snapshot.data);
           }
         } else {
-          return CircularProgressIndicator();
+          return SizedBox(
+            width: ScreenUtil().setWidth(25),
+            height: ScreenUtil().setHeight(25),
+            child: CircularProgressIndicator(),
+          );
         }
       },
     );
@@ -32,7 +37,11 @@ class Utils {
             return widgetBuilder(snapshot.data);
           }
         } else {
-          return CircularProgressIndicator();
+          return SizedBox(
+            width: ScreenUtil().setWidth(25),
+            height: ScreenUtil().setHeight(25),
+            child: CircularProgressIndicator(),
+          );
         }
       },
     );
