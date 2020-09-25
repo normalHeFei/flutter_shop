@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    print('build 调用');
+    print('home page build 调用');
     var api = Api.getInstance();
     return Utils.createFutureBuilder(api.getLms(), (lms) {
       _tabController = TabController(length: lms.length, vsync: this);
@@ -63,13 +63,13 @@ class _HomePageState extends State<HomePage>
         ),
         body: TabBarView(
           controller: _tabController,
-          children: _createTabViews(lms),
+          children: _createTabViews(lms, context),
         ),
       );
     });
   }
 
-  List<Widget> _createTabViews(lms) {
+  List<Widget> _createTabViews(lms, BuildContext context) {
     List<Widget> rst = [];
     (lms as List).forEach((element) {
       if (element['self']['name'] == '精选') {
@@ -117,11 +117,7 @@ class _HomePageState extends State<HomePage>
   }
 
   _createSsrx() {
-    return WidgetHorizontalMaterialList((){
-        //create page
-       print('点击了 更多');
-
-    });
+    return WidgetHorizontalMaterialList();
   }
 
   _createTuiJian() {

@@ -14,10 +14,8 @@ class Api {
 
   static _getInstance() {
     if (_instance == null) {
-      _instance = Api._internal(Dio(BaseOptions(
-         baseUrl: baseUrl,
-         connectTimeout: 5000
-      )));
+      _instance = Api._internal(
+          Dio(BaseOptions(baseUrl: baseUrl, connectTimeout: 5000)));
     }
     return _instance;
   }
@@ -44,15 +42,11 @@ class Api {
     return _invoke('shop/lms');
   }
 
-  Future getSsrx() async {
+  Future getSsrx(Map param) async {
+    return _invoke('shop/ssrx', param: param);
+  }
+
+  Future getMaterialList(Map params) async {
     return _invoke('shop/ssrx');
   }
-
-  Future getMaterialList(Map  params) async{
-     return _invoke('shop/ssrx');
-  }
-
-
 }
-
-

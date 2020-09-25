@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Utils {
+  /// 物料常量
+  static String  ssrxMi = "28026";
+
   static FutureBuilder createFutureBuilder(
       Future future, Function widgetBuilder) {
     return FutureBuilder(

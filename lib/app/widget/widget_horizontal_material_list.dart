@@ -4,10 +4,7 @@ import 'package:zdk_app/app/common/api.dart';
 import 'package:zdk_app/app/common/utils.dart';
 
 class WidgetHorizontalMaterialList extends StatefulWidget {
-
-  Function _onTap;
-
-  WidgetHorizontalMaterialList(this._onTap);
+  WidgetHorizontalMaterialList();
 
   @override
   State<StatefulWidget> createState() {
@@ -15,10 +12,12 @@ class WidgetHorizontalMaterialList extends StatefulWidget {
   }
 }
 
-class _WidgetHorizontalMaterialListState extends State<WidgetHorizontalMaterialList> {
+class _WidgetHorizontalMaterialListState
+    extends State<WidgetHorizontalMaterialList> {
   @override
   Widget build(BuildContext context) {
     var screenUtil = ScreenUtil();
+    Map<String, dynamic> param = {'pageNo': 0, 'materialId': Utils.ssrxMi};
     return Flex(
       direction: Axis.vertical,
       children: [
@@ -51,11 +50,18 @@ class _WidgetHorizontalMaterialListState extends State<WidgetHorizontalMaterialL
                   children: [
                     GestureDetector(
                       child: Text(
-                        '更多',
+                        '查看更多',
                         maxLines: 1,
-                        style: TextStyle(fontWeight: FontWeight.w100, color: Colors.grey),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w100, color: Colors.grey),
                       ),
-                      onTap: widget._onTap(),
+                      onTap: () {
+                        Navigator.pushNamed(context, 'ssrx', arguments: {
+                          'apiMethod': Api.getInstance().getSsrx,
+                          'title': '实时热销',
+                          'materialId': Utils.ssrxMi
+                        });
+                      },
                     )
                   ],
                 ),
@@ -65,8 +71,8 @@ class _WidgetHorizontalMaterialListState extends State<WidgetHorizontalMaterialL
         ),
         Expanded(
           flex: 5,
-          child:
-              Utils.createFutureBuilder(Api.getInstance().getSsrx(), (goods) {
+          child: Utils.createFutureBuilder(Api.getInstance().getSsrx(param),
+              (goods) {
             return ListView.builder(
               itemCount: (goods as List).length,
               scrollDirection: Axis.horizontal,

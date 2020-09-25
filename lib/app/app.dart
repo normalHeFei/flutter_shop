@@ -5,28 +5,26 @@ import 'main_wiget.dart';
 import 'package:zdk_app/app/common/config/Themes.dart';
 
 class XYApp extends StatelessWidget {
-
-  /// all routes here
-  final routesConfig = {
-    '/home/ssrx': (context, {arguments}) => WidgetVerticalMaterialList(
-          future: arguments['future'],
-          title: arguments['title'],
-        )
-  };
-
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: '晃晃の券',
+      title: 'test',
       theme: defaultTargetPlatform == TargetPlatform.iOS
           ? Themes.kIOSTheme
           : Themes.kDefaultTheme,
-      home: MainWidget(),
-      onGenerateRoute: (runtimeSettings) {
-        Function pageBuilder = this.routesConfig[runtimeSettings.name];
-        return MaterialPageRoute(
-            builder: (context) =>
-                pageBuilder(context, runtimeSettings.arguments));
+
+      routes: {
+         '/': (context){
+            return MainWidget();
+         },
+        /// 实时热销
+        'ssrx': (context) {
+          Map arguments = ModalRoute.of(context).settings.arguments;
+          return WidgetVerticalMaterialList(
+              apiMethod: arguments['apiMethod'] as Function,
+              title: arguments['title'],
+              materialId: arguments['materialId']);
+        },
       },
     );
   }
