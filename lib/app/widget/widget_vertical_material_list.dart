@@ -8,12 +8,20 @@ class WidgetVerticalMaterialList extends StatefulWidget {
   String _title;
   String _materialId;
   Function _apiMethod;
+  Widget _listTitle;
+  bool _includeTitle;
 
   WidgetVerticalMaterialList(
-      {Function apiMethod, String title, String materialId}) {
+      {Function apiMethod,
+      String title,
+      Widget listTitle,
+      String materialId,
+      bool includeTitle = true}) {
     this._apiMethod = apiMethod;
     this._title = title;
     this._materialId = materialId;
+    this._includeTitle = includeTitle;
+    this._listTitle = listTitle;
   }
 
   @override
@@ -31,6 +39,11 @@ class _WidgetVerticalMaterialListState
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+
+    /// 页面初始化自动刷新
+    WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((timeStamp) {
+      _getMoreData();
+    });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -48,14 +61,21 @@ class _WidgetVerticalMaterialListState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: _buildText(),
-      ),
-      body: RefreshIndicator(
-        child: _buildList(),
-        onRefresh: _handleRefresh,
-      ),
+    var screenUtil = ScreenUtil();
+    if (widget._includeTitle) {
+      return Scaffold(
+        appBar: AppBar(
+          title: _buildText(),
+        ),
+        body: RefreshIndicator(
+          child: _buildList(screenUtil),
+          onRefresh: _handleRefresh,
+        ),
+      );
+    }
+    return RefreshIndicator(
+      child: _buildList(screenUtil),
+      onRefresh: _handleRefresh,
     );
   }
 
@@ -65,7 +85,7 @@ class _WidgetVerticalMaterialListState
       'materialId': widget._materialId
     };
     var pageData = await widget._apiMethod(param);
-     if (mounted) {
+    if (mounted) {
       setState(() {
         _items.addAll((pageData as List));
       });
@@ -86,40 +106,40 @@ class _WidgetVerticalMaterialListState
     );
   }
 
-  Widget _buildList() {
-    var screenUtil = ScreenUtil();
+
+  ListView _buildList(ScreenUtil screenUtil) {
     return ListView.builder(
-        itemCount: _items.length,
-        controller: _scrollController,
-        physics: AlwaysScrollableScrollPhysics(),
-        itemBuilder: (context, idx) {
-          return Container(
-            constraints: BoxConstraints.expand(
-                width: screenUtil.setWidth(580),
-                height: screenUtil.setHeight(200)),
-            padding: EdgeInsets.fromLTRB(
-                screenUtil.setWidth(10),
-                screenUtil.setHeight(10),
-                screenUtil.setWidth(10),
-                screenUtil.setHeight(10)),
-            child: Flex(
-              direction: Axis.horizontal,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Image.network(_items[idx]['image']),
+      itemCount: _items.length,
+      controller: _scrollController,
+      physics: AlwaysScrollableScrollPhysics(),
+      itemBuilder: (context, idx) {
+        return Container(
+          constraints: BoxConstraints.expand(
+              width: screenUtil.setWidth(580),
+              height: screenUtil.setHeight(200)),
+          padding: EdgeInsets.fromLTRB(
+              screenUtil.setWidth(10),
+              screenUtil.setHeight(10),
+              screenUtil.setWidth(10),
+              screenUtil.setHeight(10)),
+          child: Flex(
+            direction: Axis.horizontal,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Image.network(_items[idx]['image']),
+              ),
+              Expanded(
+                flex: 2,
+                child: Flex(
+                  direction: Axis.vertical,
+                  children: _buildItemRightPart(idx, screenUtil),
                 ),
-                Expanded(
-                  flex: 2,
-                  child: Flex(
-                    direction: Axis.vertical,
-                    children: _buildItemRightPart(idx, screenUtil),
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
+              ),
+            ],
+          ),
+        );
+      });
   }
 
   List<Widget> _buildItemRightPart(int idx, ScreenUtil screenUtil) {

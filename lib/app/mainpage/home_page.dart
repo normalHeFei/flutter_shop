@@ -4,8 +4,9 @@ import 'package:zdk_app/app/common/api.dart';
 import 'package:zdk_app/app/common/utils.dart';
 import 'package:zdk_app/app/widget/widget_banner.dart';
 import 'package:zdk_app/app/widget/widget_cat_tab.dart';
-import 'package:zdk_app/app/widget/widget_horizontal_material_list.dart';
+import 'package:zdk_app/app/widget/widget_ssrx_list.dart';
 import 'package:zdk_app/app/widget/widget_search.dart';
+import 'package:zdk_app/app/widget/widget_vertical_material_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key key}) : super(key: key);
@@ -25,7 +26,6 @@ class _HomePageState extends State<HomePage>
 
   @override
   void initState() {
-    print('initState 调用');
     super.initState();
   }
 
@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage>
               child: _createSsrx(),
             ),
             Expanded(
-              flex: 3,
+              flex: 4,
               child: _createTuiJian(),
             )
           ],
@@ -117,11 +117,14 @@ class _HomePageState extends State<HomePage>
   }
 
   _createSsrx() {
-    return WidgetHorizontalMaterialList();
+    return WidgetSsrxList();
   }
 
   _createTuiJian() {
-    return _createPlaceHolder();
+    return WidgetVerticalMaterialList(
+      apiMethod: Api.getInstance().getMaterialList,
+      includeTitle: false,
+    );
   }
 
   _createCommonGoodList() {

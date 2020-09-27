@@ -24,7 +24,6 @@ class SearchBar extends SearchDelegate {
         icon: Icon(Icons.clear),
         onPressed: () {
           query = "";
-
           ///搜索建议的内容
           showSuggestions(context);
         },

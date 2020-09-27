@@ -46,7 +46,8 @@ class Api {
     return _invoke('shop/ssrx', param: param);
   }
 
+  ///  根据物料查询商品列表
   Future getMaterialList(Map params) async {
-    return _invoke('shop/ssrx');
+    return _invoke('shop/cnxh', param: params);
   }
 }
