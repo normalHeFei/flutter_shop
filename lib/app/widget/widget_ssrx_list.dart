@@ -162,14 +162,25 @@ class _WidgetSsrxListState extends State<WidgetSsrxList> {
 
   @override
   Widget build(BuildContext context) {
-    var screenUtil = ScreenUtil();
-    return Container(
-       constraints: BoxConstraints.tightFor(width: ScreenUtil.screenWidth),
-       child: Wrap(
-         direction: Axis.vertical,
-         spacing: screenUtil.setHeight(10),
-         children: [_buildTop(), _buildCenter(), _buildBottom()],
-       ),
+    return Flex(
+      direction: Axis.vertical,
+      children: [
+        Expanded(
+          flex: 1,
+          child: _buildTop(),
+        ),
+        Expanded(
+          flex: 5,
+          child: _buildCenter(),
+        ),
+        Expanded(
+          flex: 1,
+          child: Container(
+            margin: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
+            child: _buildBottom(),
+          ),
+        )
+      ],
     );
   }
 }

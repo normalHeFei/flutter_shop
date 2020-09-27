@@ -47,23 +47,26 @@ class _WidgetBannerState extends State<WidgetBanner> {
 
   Widget _buildIndicator() {
     var length = widget.datas.length;
-    return Positioned(
-      bottom: 10,
-      child: Row(
-        children: widget.datas.map((s) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 3.0),
-            child: ClipOval(
-              child: Container(
-                width: 8,
-                height: 8,
-                color: s == widget.datas[_currIdx % length]
-                    ? Colors.white
-                    : Colors.grey,
+    return Container(
+         color: Colors.white,
+      child: Positioned(
+        bottom: 10,
+        child: Row(
+          children: widget.datas.map((s) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 3.0),
+              child: ClipOval(
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  color: s == widget.datas[_currIdx % length]
+                      ? Colors.white
+                      : Colors.grey,
+                ),
               ),
-            ),
-          );
-        }).toList(),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

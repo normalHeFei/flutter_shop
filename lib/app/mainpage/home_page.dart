@@ -77,15 +77,15 @@ class _HomePageState extends State<HomePage>
           direction: Axis.vertical,
           children: [
             Expanded(
-              flex: 1,
+              flex: 2,
               child: _createBanner(),
             ),
             Expanded(
-              flex: 2,
+              flex: 5,
               child: _createSsrx(),
             ),
             Expanded(
-              flex: 4,
+              flex: 6,
               child: _createTuiJian(),
             )
           ],
@@ -117,13 +117,16 @@ class _HomePageState extends State<HomePage>
   }
 
   _createSsrx() {
-    return WidgetSsrxList();
+   return WidgetSsrxList();
   }
 
   _createTuiJian() {
-    return WidgetVerticalMaterialList(
-      apiMethod: Api.getInstance().getMaterialList,
-      includeTitle: false,
+    return  Container(
+       color: Colors.white,
+      child: WidgetVerticalMaterialList(
+        apiMethod: Api.getInstance().getMaterialList,
+        includeTitle: false,
+      ),
     );
   }
 
