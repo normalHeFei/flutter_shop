@@ -1,7 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zdk_app/app/common/api.dart';
-import 'package:zdk_app/app/common/utils.dart';
+import 'package:zdk_app/app/common/commons.dart';
 
 class WidgetSsrxList extends StatefulWidget {
   WidgetSsrxList();
@@ -13,13 +14,14 @@ class WidgetSsrxList extends StatefulWidget {
 }
 
 class _WidgetSsrxListState extends State<WidgetSsrxList> {
+
   _buildTop() {
     var screenUtil = ScreenUtil();
     return Stack(
       children: [
         Positioned(
           left: 0,
-          top: screenUtil.setHeight(10),
+          top: 0,
           child: Wrap(
             spacing: screenUtil.setWidth(5),
             children: [
@@ -37,7 +39,7 @@ class _WidgetSsrxListState extends State<WidgetSsrxList> {
         ),
         Positioned(
           right: 0,
-          top: screenUtil.setHeight(10),
+          top: 0,
           child: Wrap(
             children: [
               GestureDetector(
@@ -67,15 +69,13 @@ class _WidgetSsrxListState extends State<WidgetSsrxList> {
     Map<String, dynamic> param = {'pageNo': 0, 'materialId': Utils.ssrxMi};
     return Utils.createFutureBuilder(Api.getInstance().getSsrx(param), (goods) {
       return ListView.builder(
+        shrinkWrap: true,
         itemCount: (goods as List).length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, idx) {
           String price = goods[idx]['currPrice'],
               sellNum = goods[idx]['sellNum'];
           return Container(
-            constraints: BoxConstraints.expand(
-                width: screenUtil.setWidth(200),
-                height: screenUtil.setHeight(100)),
             padding: EdgeInsets.only(left: screenUtil.setWidth(5)),
             child: Flex(
               direction: Axis.vertical,
@@ -134,53 +134,19 @@ class _WidgetSsrxListState extends State<WidgetSsrxList> {
     });
   }
 
-  _buildBottom() {
-    var screenUtil = ScreenUtil();
-    return Stack(
-      children: [
-        Positioned(
-          top: 0,
-          left: 0,
-          child: Wrap(
-            spacing: screenUtil.setWidth(5),
-            children: [
-              Icon(
-                Icons.bookmark_border,
-                color: Colors.red,
-              ),
-              Text(
-                '为你精选好货',
-                maxLines: 1,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
-        )
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Flex(
-      direction: Axis.vertical,
-      children: [
-        Expanded(
-          flex: 1,
-          child: _buildTop(),
-        ),
-        Expanded(
-          flex: 5,
-          child: _buildCenter(),
-        ),
-        Expanded(
-          flex: 1,
-          child: Container(
-            margin: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
-            child: _buildBottom(),
-          ),
-        )
-      ],
+    return Container(
+      constraints: BoxConstraints.tightFor(width: ScreenUtil.screenWidth, height: ScreenUtil().setHeight(150)),
+      child: Wrap(
+        children: [
+          _buildTop(),
+          Container(
+            constraints: BoxConstraints.tightFor(width: ScreenUtil.screenWidth),
+            child: _buildCenter(),
+          )
+        ],
+      ),
     );
   }
 }

@@ -36,19 +36,22 @@ class _WidgetBannerState extends State<WidgetBanner> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: <Widget>[
-        _buildPageView(),
-        _buildIndicator(),
-      ],
+    return Container(
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: <Widget>[
+          _buildPageView(),
+          _buildIndicator(),
+        ],
+      ),
     );
   }
 
   Widget _buildIndicator() {
     var length = widget.datas.length;
     return Container(
-         color: Colors.white,
+      color: Colors.white,
       child: Positioned(
         bottom: 10,
         child: Row(
@@ -97,7 +100,7 @@ class _WidgetBannerState extends State<WidgetBanner> {
     if (_currIdx == widget.datas.length) {
       _currIdx = 0;
     }
-    if(_pageController.positions.length > 0){
+    if (_pageController.positions.length > 0) {
       _pageController.animateToPage(_currIdx,
           duration: Duration(milliseconds: 300), curve: Curves.linear);
       _currIdx++;

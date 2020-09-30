@@ -12,7 +12,7 @@ class Api {
 
   factory Api.getInstance() => _getInstance();
 
-  static _getInstance() {
+  static _getInstance(){
     if (_instance == null) {
       _instance = Api._internal(
           Dio(BaseOptions(baseUrl: baseUrl, connectTimeout: 5000)));
@@ -50,4 +50,6 @@ class Api {
   Future getMaterialList(Map params) async {
     return _invoke('shop/cnxh', param: params);
   }
+
+
 }

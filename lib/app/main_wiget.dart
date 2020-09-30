@@ -55,7 +55,6 @@ class _MainWidgetState extends State<MainWidget>
           });
         },
         type: BottomNavigationBarType.fixed,
-        //fixedColor: Colors.white,
         items: [
           BottomNavigationBarItem(
             activeIcon:
