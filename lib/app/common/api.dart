@@ -12,7 +12,7 @@ class Api {
 
   factory Api.getInstance() => _getInstance();
 
-  static _getInstance(){
+  static _getInstance() {
     if (_instance == null) {
       _instance = Api._internal(
           Dio(BaseOptions(baseUrl: baseUrl, connectTimeout: 5000)));
@@ -38,18 +38,11 @@ class Api {
     return _invoke('shop/listBanner');
   }
 
-  Future getLms() async {
-    return _invoke('shop/lms');
+  Future queryCats() async {
+    return _invoke('shop/queryCats');
   }
 
-  Future getSsrx(Map param) async {
-    return _invoke('shop/ssrx', param: param);
+  Future pageQueryByCat(Map param) async {
+    return _invoke('shop/pageQueryByCat', param: param);
   }
-
-  ///  根据物料查询商品列表
-  Future getMaterialList(Map params) async {
-    return _invoke('shop/cnxh', param: params);
-  }
-
-
 }

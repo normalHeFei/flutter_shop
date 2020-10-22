@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'mainpage/mine_page.dart';
 
-import 'mainpage/home_page.dart';
+import 'mainpage/search_page.dart';
 import 'mainpage/selfboss_page.dart';
 
 class MainWidget extends StatefulWidget {
@@ -27,7 +27,7 @@ class _MainWidgetState extends State<MainWidget>
   @override
   void initState() {
     super.initState();
-    _pages = [HomePage(), SelfBossPage(), MinePage()];
+    _pages = [SearchPage(), SelfBossPage(), MinePage()];
   }
 
   @override

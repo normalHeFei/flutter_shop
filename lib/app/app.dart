@@ -18,13 +18,13 @@ class XYApp extends StatelessWidget {
             return MainWidget();
          },
         /// 实时热销
-        'ssrx': (context) {
+        /*'ssrx': (context) {
           Map arguments = ModalRoute.of(context).settings.arguments;
           return WidgetVerticalMaterialList(
               apiMethod: arguments['apiMethod'] as Function,
               title: arguments['title'],
               materialId: arguments['materialId']);
-        },
+        },*/
       },
     );
   }

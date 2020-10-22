@@ -15,8 +15,8 @@ class Global {
     if (_sharePre == null) {
       _sharePre = await SharedPreferences.getInstance();
     }
-    var lms = await Api.getInstance().getLms();
-    return _sharePre.setString('lms', _encoder.convert(lms));
+    var lms = await Api.getInstance().queryCats();
+    return _sharePre.setString('cats', _encoder.convert(lms));
   }
 
   static dynamic get(String key) {
