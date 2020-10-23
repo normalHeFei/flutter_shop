@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 class Api {
   static Api _instance;
   Dio _dio;
-  static const String baseUrl = 'http://192.168.7.133:8080/';
+  static const String baseUrl = 'http://172.16.2.241:8080/';
 
   Api._internal(this._dio);
 
@@ -15,12 +15,13 @@ class Api {
   static _getInstance() {
     if (_instance == null) {
       _instance = Api._internal(
-          Dio(BaseOptions(baseUrl: baseUrl, connectTimeout: 5000)));
+          Dio(BaseOptions(baseUrl: baseUrl, connectTimeout: 10000)));
     }
     return _instance;
   }
 
   Future _invoke(url, {Map param}) async {
+    print('请求参数: $param');
     return _dio
         .get(baseUrl + url, queryParameters: param)
         .then((value) => _decode(value))
@@ -42,7 +43,7 @@ class Api {
     return _invoke('shop/queryCats');
   }
 
-  Future pageQueryByCat(Map param) async {
+  Future pageQueryByCat(Map<String, dynamic> param) async {
     return _invoke('shop/pageQueryByCat', param: param);
   }
 }

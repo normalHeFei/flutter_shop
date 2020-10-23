@@ -82,14 +82,12 @@ class _SearchPageState extends State<SearchPage>
     WidgetListViewSorter sorter;
 
     for (var cat in _cats) {
-      paramProcessor = _getSortParamProcess(cat['platform']);
-      sorter = _getSortWidget(cat['platform']);
+      paramProcessor = _getSortParamProcess(cat);
+      sorter = _getSortWidget(cat);
       rst.add(WidgetPageView(
         sorter: sorter,
         apiParamProcess: paramProcessor,
-        apiMethod: Api
-            .getInstance()
-            .pageQueryByCat,
+        apiMethod: Api.getInstance().pageQueryByCat,
         listItemBuilder: _buildListItem,
       ));
     }
@@ -97,7 +95,8 @@ class _SearchPageState extends State<SearchPage>
   }
 
   //获取不同平台的排序条
-  _getSortWidget(platform) {
+  Widget _getSortWidget(cat) {
+    var platform = cat['platform'];
     if (platform == 'pdd') {
       return WidgetListViewSorter([
         SortObj('综合'),
@@ -106,17 +105,17 @@ class _SearchPageState extends State<SearchPage>
       ]);
     }
     //淘宝tab 无需排序
-    if (platform == 'tb') {
+    else {
       return null;
     }
   }
 
   //获取不同平台的排序参数处理函数
-  _getSortParamProcess(platform) {
+  _getSortParamProcess(cat) {
+    var platform = cat['platform'];
     if (platform == 'pdd') {
-      return (param) {
-        Map map = param as Map;
-        SortObj sortObj = param['sort'] as SortObj;
+      return (Map<String, dynamic> map) {
+        SortObj sortObj = map['sort'] as SortObj;
         if (sortObj != null) {
           if (sortObj.name == '价格') {
             if (sortObj.desc) {
@@ -133,13 +132,15 @@ class _SearchPageState extends State<SearchPage>
             }
           }
         }
+        map.addAll({'catId': cat['referId'], 'platform': cat['platform']});
         return map;
       };
     }
 
     /// 淘宝未找到排序属性, 直接返回原参数
-    return (param) {
-      return param;
+    return (Map<String, dynamic> map) {
+      map.addAll({'catId': cat['referId'], 'platform': cat['platform']});
+      return map;
     };
   }
 
@@ -244,7 +245,7 @@ class _SearchPageState extends State<SearchPage>
                         gradient: LinearGradient(
                             colors: [Colors.red, Colors.orange[700]]),
                         borderRadius:
-                        BorderRadius.circular(screenUtil.setWidth(3.0)),
+                            BorderRadius.circular(screenUtil.setWidth(3.0)),
                         boxShadow: [
                           BoxShadow(
                               color: Colors.black54,
@@ -278,8 +279,8 @@ class _SearchPageState extends State<SearchPage>
     ];
   }
 
-  List<Widget> _buildRightMj(Map item, offerContext, ScreenUtil screenUtil,
-      currPrice, sellNum) {
+  List<Widget> _buildRightMj(
+      Map item, offerContext, ScreenUtil screenUtil, currPrice, sellNum) {
     return [
       Expanded(
         flex: 1,

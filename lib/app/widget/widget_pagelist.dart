@@ -4,9 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zdk_app/app/common/events.dart';
 
 typedef OnClick = void Function(State listItemState);
-typedef ApiMethod = Future Function(Map param);
+typedef ApiMethod = Future Function(Map<String, dynamic> param);
 typedef ListItemBuilder = Widget Function(dynamic itemData);
-typedef ApiParamProcess = Map Function(Map param);
+typedef ApiParamProcess = Map<String, dynamic> Function(
+    Map<String, dynamic> param);
 
 ScreenUtil screenUtil = ScreenUtil();
 
