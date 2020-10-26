@@ -117,21 +117,26 @@ class _SearchPageState extends State<SearchPage>
       return (Map<String, dynamic> map) {
         SortObj sortObj = map['sort'] as SortObj;
         if (sortObj != null) {
+          map.remove('sort');
           if (sortObj.name == '价格') {
             if (sortObj.desc) {
-              map.addAll({'sort': 3});
+              map['sort'] = 3;
             } else {
-              map.addAll({'sort': 4});
+              map['sort'] = 4;
             }
           }
           if (sortObj.name == '销量') {
             if (sortObj.desc) {
-              map.addAll({'sort': 5});
+              map['sort'] = 5;
             } else {
-              map.addAll({'sort': 6});
+              map['sort'] = 6;
             }
           }
         }
+        if (map['sort'] == null) {
+          map['sort'] = 0;
+        }
+        map['pageNo'] = map['pageNo'] + 1;
         map.addAll({'catId': cat['referId'], 'platform': cat['platform']});
         return map;
       };
