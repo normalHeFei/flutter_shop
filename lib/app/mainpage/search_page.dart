@@ -51,16 +51,9 @@ class _SearchPageState extends State<SearchPage>
 
   @override
   Widget build(BuildContext context) {
-    print('home page build 调用');
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                showSearch(context: context, delegate: SearchBar());
-              })
-        ],
+
         bottom: TabBar(
           isScrollable: true,
           indicatorColor: Colors.deepOrangeAccent,
@@ -79,13 +72,9 @@ class _SearchPageState extends State<SearchPage>
   List<Widget> _buildTabViews(BuildContext context) {
     List<Widget> rst = [];
     ApiParamProcess paramProcessor;
-    WidgetListViewSorter sorter;
-
     for (var cat in _cats) {
       paramProcessor = _getSortParamProcess(cat);
-      sorter = _getSortWidget(cat);
       rst.add(WidgetPageView(
-        sorter: sorter,
         apiParamProcess: paramProcessor,
         apiMethod: Api.getInstance().pageQueryByCat,
         listItemBuilder: _buildListItem,
@@ -94,21 +83,6 @@ class _SearchPageState extends State<SearchPage>
     return rst;
   }
 
-  //获取不同平台的排序条
-  Widget _getSortWidget(cat) {
-    var platform = cat['platform'];
-    if (platform == 'pdd') {
-      return WidgetListViewSorter([
-        SortObj('综合'),
-        SortObj('价格'),
-        SortObj('销量'),
-      ]);
-    }
-    //淘宝tab 无需排序
-    else {
-      return null;
-    }
-  }
 
   //获取不同平台的排序参数处理函数
   _getSortParamProcess(cat) {
