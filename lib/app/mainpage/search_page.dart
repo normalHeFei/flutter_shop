@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:event_bus/event_bus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,6 +13,14 @@ import 'package:zdk_app/app/widget/widget_pagelist.dart';
 import 'package:zdk_app/app/widget/widget_progress.dart';
 
 import 'package:zdk_app/app/widget/widget_search.dart';
+
+EventBus eventBus = EventBus();
+
+class CatSelectedEvent {
+  Map curr;
+
+  CatSelectedEvent(this.curr);
+}
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key key}) : super(key: key);
@@ -33,6 +45,7 @@ class _SearchPageState extends State<SearchPage>
   TabController _tabController;
   List<Widget> _tabs;
   List _cats;
+  StreamSubscription _subscription;
 
   @override
   bool get wantKeepAlive => true;
@@ -48,12 +61,24 @@ class _SearchPageState extends State<SearchPage>
         name: e['name'],
       );
     }).toList();
+
+    ///初始化监听器
+    _subscription = eventBus.on<CatSelectedEvent>().listen((event) {
+      var idx = _cats.asMap().entries.firstWhere((element){
+         return element.value['id'] == event.curr['id'];
+      })?.key;
+      if (idx != -1) {
+        Navigator.pop(context);
+        _tabController.animateTo(idx);
+      }
+    });
     print('_cats: $_cats');
   }
 
   @override
   void dispose() {
     super.dispose();
+    _subscription.cancel();
   }
 
   @override
@@ -75,6 +100,7 @@ class _SearchPageState extends State<SearchPage>
                 );
               }));
         }),
+        actions: [WidgetCatMoreBtn()],
         bottom: TabBar(
           isScrollable: true,
           indicatorColor: Colors.deepOrangeAccent,
@@ -431,35 +457,149 @@ mixin ListItemBuilderMixin {
   }
 }
 
-class WidgetFloatTarBar extends StatelessWidget implements PreferredSizeWidget {
-  final TabBar tabBar;
+class WidgetCatMoreBtn extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: GestureDetector(
+        child: Container(
+          child: const Text(
+            '☰ 分类',
+            style: TextStyle(color: Colors.red, fontSize: 14),
+          ),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              color: Colors.red.shade50),
+          padding: EdgeInsets.all(8),
+          margin: EdgeInsets.only(right: screenUtil.setWidth(5)),
+        ),
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return WidgetCatMoreRoute();
+          }));
+        },
+      ),
+    );
+  }
+}
 
-  WidgetFloatTarBar(this.tabBar);
+class WidgetCatMoreRoute extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return WidgetCatMoreRouteState();
+  }
+}
+
+class WidgetCatMoreRouteState extends State {
+  static final Map platformMap = {'淘宝': 'tb', '拼多多': 'pdd', '京东': 'jd'};
+  String currTabText;
+
+  final TextStyle selectedStyle = TextStyle(fontWeight: FontWeight.bold);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Stack(
-        children: [
-          Positioned(
-            left: 0,
-            child: tabBar,
-          ),
-          Positioned(
-            right: 0,
-            child: RaisedButton(
-              color: Colors.deepOrangeAccent,
-              child: const Text('查看更多'),
-              onPressed: () {
-                print('打开标签页');
-              },
-            ),
-          )
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('热门分类'),
+      ),
+      body: Container(
+        constraints: BoxConstraints.expand(width: ScreenUtil.screenWidth),
+        child: Flex(
+          direction: Axis.horizontal,
+          children: [
+            Expanded(
+                flex: 1,
+                child: Wrap(
+                  direction: Axis.vertical,
+                  children: [
+                    _buildTab('淘宝'),
+                    Divider(
+                      color: Colors.grey.shade900,
+                      height: screenUtil.setHeight(1),
+                    ),
+                    _buildTab('拼多多'),
+                    Divider(
+                      color: Colors.grey.shade900,
+                      height: screenUtil.setHeight(1),
+                    ),
+                    _buildTab('京东'),
+                  ],
+                )),
+            Expanded(flex: 5, child: _buildTabView())
+          ],
+        ),
       ),
     );
   }
 
+  Widget _buildTabView() {
+    List cats = Global.get('cats') as List;
+    var currPlatformCats = cats.where((element) {
+      return element['platform'] == platformMap[currTabText];
+    }).map((e) {
+      return WidgetCatMoreItem(e);
+    }).toList();
+    return Scrollbar(
+      child: SingleChildScrollView(
+        child: Wrap(
+          spacing: screenUtil.setWidth(10),
+          runSpacing: screenUtil.setHeight(8),
+          children: currPlatformCats,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTab(String text) {
+    BoxDecoration decoration;
+    TextStyle textStyle;
+    if (currTabText == text) {
+      textStyle = selectedStyle;
+    }
+    return GestureDetector(
+      child: Container(
+        height: screenUtil.setHeight(100),
+        decoration: decoration,
+        child: Text(
+          text,
+          style: textStyle,
+        ),
+      ),
+      onTap: () {
+        setState(() {
+          currTabText = text;
+        });
+      },
+    );
+  }
+
   @override
-  Size get preferredSize => tabBar.preferredSize;
+  void initState() {
+    super.initState();
+
+    ///默认选择
+    currTabText = '淘宝';
+  }
+}
+
+class WidgetCatMoreItem extends StatelessWidget {
+  final Map cat;
+
+  WidgetCatMoreItem(this.cat);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      child: Container(
+        padding: EdgeInsets.all(5),
+        child: Text(cat['name']),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.deepOrangeAccent.shade100),
+      ),
+      onTap: () {
+        eventBus.fire(CatSelectedEvent(cat));
+      },
+    );
+  }
 }
