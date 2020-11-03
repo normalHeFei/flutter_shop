@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:zdk_app/app/common/events.dart';
+import 'package:zdk_app/app/widget/widget_progress.dart';
 
 typedef OnClick = void Function(State listItemState);
 typedef ApiMethod = Future Function(Map<String, dynamic> param);
-typedef ListItemBuilder = Widget Function(dynamic itemData);
+typedef ListItemBuilder = Widget Function(dynamic itemData, BuildContext context);
 typedef ApiParamProcess = Map<String, dynamic> Function(
     Map<String, dynamic> param);
 
@@ -24,17 +24,13 @@ class SortObj {
 class WidgetPageView extends StatefulWidget {
   final ListItemBuilder listItemBuilder;
 
-  final OnClick onClick;
-
   final ApiMethod apiMethod;
 
   final ApiParamProcess apiParamProcess;
 
-  WidgetPageView(
-      {this.apiMethod,
-      this.apiParamProcess,
-      this.listItemBuilder,
-      this.onClick})
+  WidgetPageView({this.apiMethod,
+    this.apiParamProcess,
+    this.listItemBuilder})
       : assert(listItemBuilder != null),
         assert(apiMethod != null);
 
@@ -74,19 +70,21 @@ class _WidgetPageViewState extends State<WidgetPageView> {
   @override
   void dispose() {
     super.dispose();
-    bus.off('sortChange');
   }
 
   @override
   Widget build(BuildContext context) {
-    return _buildList();
+    if(_items.isEmpty){
+       return WidgetProgress('正在加载');
+    }
+    return _buildList(context);
   }
 
-  Widget _buildList() {
+  Widget _buildList(BuildContext context) {
     return RefreshIndicator(
       child: ListView.builder(
         itemBuilder: (context, idx) {
-          return widget.listItemBuilder(_items[idx]);
+          return widget.listItemBuilder(_items[idx], context);
         },
         itemCount: _items.length,
         controller: _scrollController,
@@ -108,7 +106,10 @@ class _WidgetPageViewState extends State<WidgetPageView> {
       'pageSize': 10,
       'sort': _getCurrSortObj()
     };
-    var pageData = await widget.apiMethod(widget.apiParamProcess(sortParam));
+    if (widget.apiParamProcess != null) {
+      sortParam = widget.apiParamProcess(sortParam);
+    }
+    var pageData = await widget.apiMethod(sortParam);
     if (mounted) {
       setState(() {
         _items.addAll((pageData as List));

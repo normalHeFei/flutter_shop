@@ -46,4 +46,19 @@ class Api {
   Future pageQueryByCat(Map<String, dynamic> param) async {
     return _invoke('shop/pageQueryByCat', param: param);
   }
+
+  Future pageQueryByKw(Map<String, dynamic> param) async {
+    return _invoke('shop/pageQueryByKw', param: param);
+  }
+
+  Future queryRecommendKeywords() async {
+    return _invoke('shop/queryRecommendKeywords');
+  }
+
+  Future queryPddSchemaUrl(Map<String, dynamic> param) async {
+    return _invoke('shop/queryPddSchemaUrl', param: param);
+  }
+  Future queryTbPwd(Map<String, dynamic> param) async {
+    return _invoke('shop/queryTbPwd', param: param);
+  }
 }

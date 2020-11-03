@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:zdk_app/app/widget/widget_vertical_material_list.dart';
-import 'main_wiget.dart';
-import 'package:zdk_app/app/common/config/Themes.dart';
+import 'main_widget.dart';
+import 'file:///F:/Flutter_shop/lib/app/common/Themes.dart';
 
 class XYApp extends StatelessWidget {
   @override

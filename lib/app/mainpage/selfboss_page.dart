@@ -9,10 +9,7 @@ class SelfBossPage extends StatefulWidget {
 class _SelfBossPageState extends State<SelfBossPage>
     with AutomaticKeepAliveClientMixin {
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true; // 保持底部切换状态不变
-
-
 
 
 

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zdk_app/app/common/Global.dart';
 import 'package:zdk_app/app/common/api.dart';
+import 'package:zdk_app/app/widget/widget_fake_search.dart';
 import 'package:zdk_app/app/widget/widget_pagelist.dart';
+import 'package:zdk_app/app/widget/widget_progress.dart';
 
 import 'package:zdk_app/app/widget/widget_search.dart';
 
@@ -22,7 +26,10 @@ class ValueTab<T> extends Tab {
 }
 
 class _SearchPageState extends State<SearchPage>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+    with
+        AutomaticKeepAliveClientMixin,
+        TickerProviderStateMixin,
+        ListItemBuilderMixin {
   TabController _tabController;
   List<Widget> _tabs;
   List _cats;
@@ -53,7 +60,21 @@ class _SearchPageState extends State<SearchPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: WidgetFakeSearch(() {
+          showSearch(
+              context: context,
+              delegate: WidgetSearch((query) {
+                var curr = CurrTab.getInstance().curr;
 
+                /// 创建搜索结果页
+                return WidgetPageView(
+                  apiMethod: Api.getInstance().pageQueryByKw,
+                  apiParamProcess: _getKwProcessFun(curr, query),
+                  listItemBuilder: _buildListItem,
+                );
+              }));
+        }),
         bottom: TabBar(
           isScrollable: true,
           indicatorColor: Colors.deepOrangeAccent,
@@ -82,7 +103,6 @@ class _SearchPageState extends State<SearchPage>
     }
     return rst;
   }
-
 
   //获取不同平台的排序参数处理函数
   _getSortParamProcess(cat) {
@@ -123,32 +143,100 @@ class _SearchPageState extends State<SearchPage>
     };
   }
 
-  Widget _buildListItem(dynamic itemData) {
+  _getKwProcessFun(Map currPlatform, String keyword) {
+    return (Map<String, dynamic> rawParam) {
+      rawParam['keyword'] = keyword;
+      rawParam['platform'] = currPlatform['platform'];
+      rawParam['pageNo'] = ++rawParam['pageNo'];
+      return rawParam;
+    };
+  }
+}
+
+class WidgetTbDialog extends StatefulWidget {
+  final Future queryPwdFuture;
+
+  WidgetTbDialog(this.queryPwdFuture);
+
+  @override
+  State<StatefulWidget> createState() {
+    return WidgetTbDialogState();
+  }
+}
+
+class WidgetTbDialogState extends State<WidgetTbDialog> {
+  String qwdState;
+
+  @override
+  Widget build(BuildContext context) {
+    if (qwdState == null) {
+      return Center(
+        child: const CircularProgressIndicator(),
+      );
+    }
+    return AlertDialog(
+      content: Text(qwdState),
+      actions: [
+        FlatButton(
+          child: const Text('取消'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        FlatButton(
+          child: const Text('复制'),
+          onPressed: () {
+            Clipboard.setData(ClipboardData(text: qwdState));
+            Navigator.of(context).pop();
+          },
+        )
+      ],
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.queryPwdFuture.then((qwd) {
+      setState(() {
+        qwdState = qwd;
+      });
+    });
+  }
+}
+
+mixin ListItemBuilderMixin {
+  Widget _buildListItem(dynamic itemData, BuildContext context) {
     Map item = itemData as Map;
-    return Container(
-      constraints: BoxConstraints.expand(
-          width: screenUtil.setWidth(580), height: screenUtil.setHeight(200)),
-      padding: EdgeInsets.fromLTRB(
-          screenUtil.setWidth(10),
-          screenUtil.setHeight(10),
-          screenUtil.setWidth(10),
-          screenUtil.setHeight(10)),
-      child: Flex(
-        direction: Axis.horizontal,
-        children: [
-          Expanded(
-            flex: 1,
-            child: Image.network(item['image']),
-          ),
-          Expanded(
-            flex: 2,
-            child: Flex(
-              direction: Axis.vertical,
-              children: _buildRight(item),
+    return GestureDetector(
+      child: Container(
+        constraints: BoxConstraints.tightFor(
+            width: screenUtil.setWidth(580), height: screenUtil.setHeight(200)),
+        padding: EdgeInsets.fromLTRB(
+            screenUtil.setWidth(10),
+            screenUtil.setHeight(10),
+            screenUtil.setWidth(10),
+            screenUtil.setHeight(10)),
+        child: Flex(
+          direction: Axis.horizontal,
+          children: [
+            Expanded(
+              flex: 1,
+              child: Image.network(item['image']),
             ),
-          ),
-        ],
+            Expanded(
+              flex: 2,
+              child: Flex(
+                direction: Axis.vertical,
+                children: _buildRight(item),
+              ),
+            ),
+          ],
+        ),
       ),
+      onTap: () {
+        _gotoThirdApp(item, context);
+      },
     );
   }
 
@@ -307,4 +395,71 @@ class _SearchPageState extends State<SearchPage>
           )),
     ];
   }
+
+  /// 跳转到第三方app
+  _gotoThirdApp(Map<dynamic, dynamic> item, BuildContext context) {
+    print('点击了, item:  $item');
+    // 暂且通过show dialog 的方式显示进度条
+    var platform = item['platform'], tbShareUrl = item['tbShareUrl'];
+    if (platform == 'pdd') {
+      showDialog(
+          context: context,
+          builder: (BuildContext ctx) {
+            return WidgetProgress('前往拼多多');
+          });
+      Api.getInstance()
+          .queryPddSchemaUrl({'itemId': item['itemId']}).then((urls) {
+        canLaunch(urls['schemaUrl']).then((can) {
+          if (can) {
+            launch(urls['schemaUrl'])
+                .then((value) => Navigator.of(context).pop());
+          } else {
+            launch(urls['wxUrl']).then((value) => Navigator.of(context).pop());
+          }
+        });
+      });
+    }
+    // tb 打开淘口令 对话框
+    if (platform == 'tb') {
+      showDialog(
+          context: context,
+          builder: (ctx) {
+            return WidgetTbDialog(
+                Api.getInstance().queryTbPwd({'url': tbShareUrl}));
+          });
+    }
+  }
+}
+
+class WidgetFloatTarBar extends StatelessWidget implements PreferredSizeWidget {
+  final TabBar tabBar;
+
+  WidgetFloatTarBar(this.tabBar);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Stack(
+        children: [
+          Positioned(
+            left: 0,
+            child: tabBar,
+          ),
+          Positioned(
+            right: 0,
+            child: RaisedButton(
+              color: Colors.deepOrangeAccent,
+              child: const Text('查看更多'),
+              onPressed: () {
+                print('打开标签页');
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => tabBar.preferredSize;
 }
