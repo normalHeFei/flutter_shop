@@ -1,24 +1,19 @@
-import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:flutter/cupertino.dart';
 
-class SelfBossPage extends StatefulWidget {
+class SelfBossPage extends StatefulWidget{
   @override
-  _SelfBossPageState createState() => _SelfBossPageState();
-}
-
-class _SelfBossPageState extends State<SelfBossPage>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true; // 保持底部切换状态不变
-
-
-
-  @override
-  Widget build(BuildContext context) {
-      return Container(
-        child: Text('xxx'),
-      );
+  State<StatefulWidget> createState() {
+    return  _SelfBossPageState();
   }
 
+}
+
+class _SelfBossPageState extends State<SelfBossPage>{
+  @override
+  Widget build(BuildContext context) {
+    return  Center(
+      child: const Text('开发中,尽情期待'),
+    );
+  }
 
 }

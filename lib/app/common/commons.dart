@@ -1,3 +1,4 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,5 +33,17 @@ class Utils {
         }
       },
     );
+  }
+}
+
+class EventBuses {
+  static EventBus _eventBus;
+
+  static
+  EventBus getEventBus() {
+    if (_eventBus == null) {
+      _eventBus = EventBus();
+    }
+    return _eventBus;
   }
 }

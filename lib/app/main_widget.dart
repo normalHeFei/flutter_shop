@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
+import 'package:zdk_app/app/mainpage/home_page.dart';
 import 'mainpage/mine_page.dart';
 
 import 'mainpage/search_page.dart';
@@ -27,7 +28,7 @@ class _MainWidgetState extends State<MainWidget>
   @override
   void initState() {
     super.initState();
-    _pages = [SearchPage(), SelfBossPage(), MinePage()];
+    _pages = [HomePage(), SearchPage(), SelfBossPage(), MinePage()];
   }
 
   @override
@@ -65,6 +66,14 @@ class _MainWidgetState extends State<MainWidget>
                 Text("首页", style: TextStyle(color: _bottomNavigationTextColor)),
           ),
           BottomNavigationBarItem(
+            activeIcon:
+                Icon(Icons.local_mall, color: _bottomNavigationActiveIconColor),
+            backgroundColor: Colors.white,
+            icon: Icon(Icons.local_mall, color: _bottomNavigationIconColor),
+            title:
+                Text("搜素", style: TextStyle(color: _bottomNavigationTextColor)),
+          ),
+          BottomNavigationBarItem(
             activeIcon: Icon(Icons.shopping_cart,
                 color: _bottomNavigationActiveIconColor),
             icon: Icon(Icons.shopping_cart, color: _bottomNavigationIconColor),
@@ -73,7 +82,7 @@ class _MainWidgetState extends State<MainWidget>
           ),
           BottomNavigationBarItem(
             activeIcon:
-                Icon(Icons.category, color: _bottomNavigationActiveIconColor),
+                Icon(Icons.person_add, color: _bottomNavigationActiveIconColor),
             icon: Icon(Icons.person_add, color: _bottomNavigationIconColor),
             title:
                 Text("我的", style: TextStyle(color: _bottomNavigationTextColor)),

@@ -64,8 +64,8 @@ class _SearchPageState extends State<SearchPage>
 
     ///初始化监听器
     _subscription = eventBus.on<CatSelectedEvent>().listen((event) {
-      var idx = _cats.asMap().entries.firstWhere((element){
-         return element.value['id'] == event.curr['id'];
+      var idx = _cats.asMap().entries.firstWhere((element) {
+        return element.value['id'] == event.curr['id'];
       })?.key;
       if (idx != -1) {
         Navigator.pop(context);
@@ -87,6 +87,8 @@ class _SearchPageState extends State<SearchPage>
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: WidgetFakeSearch(() {
+          /// 取消 tab 列表页的 排序订阅, 不然搜索页点击排序,会触发外面的监听
+
           showSearch(
               context: context,
               delegate: WidgetSearch((query) {
@@ -94,13 +96,31 @@ class _SearchPageState extends State<SearchPage>
 
                 /// 创建搜索结果页
                 return WidgetPageView(
+                  'fromSearch',
+                  initSortParams: [
+                    SortParam('综合'),
+                    SortParam('销量', supportSort: true, desc: true),
+                    SortParam('价格', supportSort: true, desc: false),
+                  ],
                   apiMethod: Api.getInstance().pageQueryByKw,
-                  apiParamProcess: _getKwProcessFun(curr, query),
+                  apiParamBuilder: (sortParam, pageNo) {
+                    if (sortParam == null) {
+                      sortParam = SortParam('综合');
+                    }
+                    var platform = curr['platform'],
+                        param = {
+                          'platform': platform,
+                          'pageNo': platform == 'pdd' ? ++pageNo : pageNo,
+                          'keyword': query
+                        };
+                    param.addAll(sortParam.getPlatformSortParam(platform));
+                    return param;
+                  },
                   listItemBuilder: _buildListItem,
                 );
               }));
         }),
-        actions: [WidgetCatMoreBtn()],
+        actions: [_WidgetCatMoreBtn()],
         bottom: TabBar(
           isScrollable: true,
           indicatorColor: Colors.deepOrangeAccent,
@@ -118,55 +138,39 @@ class _SearchPageState extends State<SearchPage>
 
   List<Widget> _buildTabViews(BuildContext context) {
     List<Widget> rst = [];
-    ApiParamProcess paramProcessor;
     for (var cat in _cats) {
-      paramProcessor = _getSortParamProcess(cat);
+      var platform = cat['platform'];
+      List<SortParam> initSortParams;
+      if (platform == 'pdd') {
+        initSortParams = [
+          SortParam('综合'),
+          SortParam('销量', supportSort: true, desc: true),
+          SortParam('价格', supportSort: true, desc: false),
+        ];
+      }
       rst.add(WidgetPageView(
-        apiParamProcess: paramProcessor,
+        'fromTab',
+        initSortParams: initSortParams,
+        apiParamBuilder: (sortParam, pageNo) {
+          var param = {
+            'catId': cat['referId'],
+            'platform': platform,
+            'pageNo': platform == 'pdd' ? ++pageNo : pageNo
+          };
+
+          ///不支持排序
+          if (sortParam == null) {
+            return param;
+          } else {
+            param.addAll(sortParam.getPlatformSortParam(platform));
+            return param;
+          }
+        },
         apiMethod: Api.getInstance().pageQueryByCat,
         listItemBuilder: _buildListItem,
       ));
     }
     return rst;
-  }
-
-  //获取不同平台的排序参数处理函数
-  _getSortParamProcess(cat) {
-    var platform = cat['platform'];
-    if (platform == 'pdd') {
-      return (Map<String, dynamic> map) {
-        SortObj sortObj = map['sort'] as SortObj;
-        if (sortObj != null) {
-          map.remove('sort');
-          if (sortObj.name == '价格') {
-            if (sortObj.desc) {
-              map['sort'] = 3;
-            } else {
-              map['sort'] = 4;
-            }
-          }
-          if (sortObj.name == '销量') {
-            if (sortObj.desc) {
-              map['sort'] = 5;
-            } else {
-              map['sort'] = 6;
-            }
-          }
-        }
-        if (map['sort'] == null) {
-          map['sort'] = 0;
-        }
-        map['pageNo'] = map['pageNo'] + 1;
-        map.addAll({'catId': cat['referId'], 'platform': cat['platform']});
-        return map;
-      };
-    }
-
-    /// 淘宝未找到排序属性, 直接返回原参数
-    return (Map<String, dynamic> map) {
-      map.addAll({'catId': cat['referId'], 'platform': cat['platform']});
-      return map;
-    };
   }
 
   _getKwProcessFun(Map currPlatform, String keyword) {
@@ -457,21 +461,21 @@ mixin ListItemBuilderMixin {
   }
 }
 
-class WidgetCatMoreBtn extends StatelessWidget {
+class _WidgetCatMoreBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
       child: GestureDetector(
         child: Container(
           child: const Text(
-            '☰ 分类',
-            style: TextStyle(color: Colors.red, fontSize: 14),
+            '☰分类',
+            style: TextStyle(color: Colors.red),
           ),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(5)),
               color: Colors.red.shade50),
-          padding: EdgeInsets.all(8),
-          margin: EdgeInsets.only(right: screenUtil.setWidth(5)),
+          margin: EdgeInsets.only(right: screenUtil.setWidth(10)),
+          padding: EdgeInsets.symmetric(vertical: screenUtil.setHeight(10)),
         ),
         onTap: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
