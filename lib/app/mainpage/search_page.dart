@@ -116,7 +116,7 @@ class _SearchPageState extends State<SearchPage>
                     param.addAll(sortParam.getPlatformSortParam(platform));
                     return param;
                   },
-                  listItemBuilder: _buildListItem,
+                  listItemBuilder: buildListItem,
                 );
               }));
         }),
@@ -167,7 +167,7 @@ class _SearchPageState extends State<SearchPage>
           }
         },
         apiMethod: Api.getInstance().pageQueryByCat,
-        listItemBuilder: _buildListItem,
+        listItemBuilder: buildListItem,
       ));
     }
     return rst;
@@ -236,7 +236,7 @@ class WidgetTbDialogState extends State<WidgetTbDialog> {
 }
 
 mixin ListItemBuilderMixin {
-  Widget _buildListItem(dynamic itemData, BuildContext context) {
+  Widget buildListItem(dynamic itemData, BuildContext context) {
     Map item = itemData as Map;
     return GestureDetector(
       child: Container(

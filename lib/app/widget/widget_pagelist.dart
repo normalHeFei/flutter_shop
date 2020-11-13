@@ -14,6 +14,9 @@ typedef ListItemBuilder = Widget Function(
 typedef ApiParamBuilder = Map<String, dynamic> Function(
     SortParam currSortParam, int pageNo);
 
+///列表头
+typedef BarBuilder =PreferredSizeWidget Function();
+
 EventBus es = EventBus();
 ScreenUtil screenUtil = ScreenUtil();
 
@@ -88,14 +91,21 @@ class WidgetPageView extends StatefulWidget {
 
   final String identify;
 
-  WidgetPageView(
-    this.identify, {
+  final BarBuilder barBuilder;
+
+  WidgetPageView(this.identify, {
     this.apiMethod,
     this.apiParamBuilder,
     this.listItemBuilder,
     this.initSortParams,
-  })  : assert(listItemBuilder != null),
-        assert(apiMethod != null);
+    this.barBuilder,
+  })
+      : assert(listItemBuilder != null),
+        assert(apiMethod != null),
+
+  ///排序列表 和 表头不可都有
+        assert(initSortParams != null && barBuilder != null)
+
 
   @override
   State<StatefulWidget> createState() {
@@ -158,23 +168,28 @@ class _WidgetPageViewState extends State<WidgetPageView> {
   }
 
   Widget _buildList(BuildContext context) {
+    var bar;
+    if (widget.barBuilder != null) {
+      bar = widget.barBuilder();
+    }
+    if (widget.initSortParams != null) {
+      bar = _WidgetSortBar(widget.initSortParams, widget.identify);
+    }
     return Scaffold(
-      appBar: widget.initSortParams == null
-          ? null
-          : _WidgetSortBar(widget.initSortParams, widget.identify),
+      appBar: bar,
       body: _loading || _items.isEmpty
           ? WidgetProgress('正在加载')
           : RefreshIndicator(
-              child: ListView.builder(
-                itemBuilder: (context, idx) {
-                  return widget.listItemBuilder(_items[idx], context);
-                },
-                itemCount: _items.length,
-                controller: _scrollController,
-                physics: AlwaysScrollableScrollPhysics(),
-              ),
-              onRefresh: _handleRefresh,
-            ),
+        child: ListView.builder(
+          itemBuilder: (context, idx) {
+            return widget.listItemBuilder(_items[idx], context);
+          },
+          itemCount: _items.length,
+          controller: _scrollController,
+          physics: AlwaysScrollableScrollPhysics(),
+        ),
+        onRefresh: _handleRefresh,
+      ),
     );
   }
 
@@ -265,9 +280,9 @@ class _WidgetSortBarState extends State<_WidgetSortBar> {
         child: GestureDetector(
           child: Align(
               child: Text(
-            sortParam.name,
-            style: selectedStyle,
-          )),
+                sortParam.name,
+                style: selectedStyle,
+              )),
           onTap: () {
             _doOnTap(sortParam);
           },

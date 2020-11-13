@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 class Api {
   static Api _instance;
   Dio _dio;
-  static const String baseUrl = 'http://172.16.2.241:8080/';
+  static const String baseUrl = 'http://172.16.3.5:8080/';
 
   Api._internal(this._dio);
 
@@ -60,5 +60,13 @@ class Api {
   }
   Future queryTbPwd(Map<String, dynamic> param) async {
     return _invoke('shop/queryTbPwd', param: param);
+  }
+
+  Future queryHomeDynamic() async {
+    return _invoke('shop/queryHomeDynamic');
+  }
+
+  Future pageQueryRecommendGoods(Map<String, dynamic> param) async {
+    return _invoke('shop/pageQueryRecommendGoods');
   }
 }
