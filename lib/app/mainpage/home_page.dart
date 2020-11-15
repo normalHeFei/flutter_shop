@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> with ListItemBuilderMixin {
               child: WidgetDynamic(dynamicParam),
             ),
             Expanded(
-                flex: 2,
+                flex: 1,
                 child: WidgetPageView('fromHome',
                     apiMethod: Api.getInstance().pageQueryRecommendGoods,
                     listItemBuilder: buildListItem,
