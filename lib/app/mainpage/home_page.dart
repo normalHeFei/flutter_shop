@@ -5,7 +5,6 @@ import 'package:zdk_app/app/common/api.dart';
 import 'package:zdk_app/app/mainpage/search_page.dart';
 import 'package:zdk_app/app/widget/widget_fake_search.dart';
 import 'package:zdk_app/app/widget/widget_pagelist.dart';
-import 'package:zdk_app/app/widget/widget_progress.dart';
 import 'package:zdk_app/app/widget/widget_search.dart';
 
 class HomePage extends StatefulWidget {
@@ -58,22 +57,7 @@ class _HomePageState extends State<HomePage> with ListItemBuilderMixin {
                 }));
           }),
         ),
-        body: Container(
-          /// 50 为搜索框的高度
-          constraints: BoxConstraints.expand(width: ScreenUtil.screenWidth),
-          child: Flex(direction: Axis.vertical, children: [
-            Expanded(
-              flex: 1,
-              child: WidgetDynamic(dynamicParam),
-            ),
-            Expanded(
-                flex: 1,
-                child: WidgetPageView('fromHome',
-                    apiMethod: Api.getInstance().pageQueryRecommendGoods,
-                    listItemBuilder: buildListItem,
-                    barBuilder: _buildListTitle))
-          ]),
-        ));
+        body: WidgetCustomScrollBody());
   }
 
   @override
@@ -85,9 +69,136 @@ class _HomePageState extends State<HomePage> with ListItemBuilderMixin {
       });
     });
   }
+}
+
+class WidgetCustomScrollBody extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return WidgetCustomScrollBodyState();
+  }
+}
+
+class WidgetCustomScrollBodyState extends State<WidgetCustomScrollBody>
+    with ListItemBuilderMixin, AutomaticKeepAliveClientMixin {
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        ///  动态配置内容
+        SliverFixedExtentList(
+          delegate:
+              SliverChildBuilderDelegate((BuildContext context, int index) {
+            return Container(
+              constraints: BoxConstraints.expand(
+                  width: ScreenUtil.screenWidth,
+                  height: screenUtil.setHeight(200)),
+
+              ///  todo
+              child: WidgetDynamic(null),
+            );
+          }, childCount: 1),
+          itemExtent: screenUtil.setHeight(200),
+        ),
+
+        /// 晃晃整理
+        SliverFixedExtentList(
+          delegate: SliverChildBuilderDelegate((BuildContext context, int idx) {
+            return WidgetDailyGoods();
+          }, childCount: 1),
+          itemExtent: screenUtil.setHeight(300),
+        ),
+
+        /// 每日推荐
+        SliverFillRemaining(
+          child: WidgetPageView('fromHome',
+              apiMethod: Api.getInstance().pageQueryRecommendGoods,
+              listItemBuilder: buildListItem,
+              barBuilder: _buildListTitle),
+        )
+      ],
+    );
+  }
 
   PreferredSizeWidget _buildListTitle() {
     return WidgetListTitle();
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+}
+
+class WidgetDailyGoods extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints.expand(
+          width: ScreenUtil.screenWidth, height: screenUtil.setHeight(310)),
+      child: Wrap(
+        direction: Axis.vertical,
+        children: [
+          Wrap(
+            direction: Axis.horizontal,
+            children: [
+              Icon(
+                Icons.favorite_border,
+                color: Colors.deepOrange,
+              ),
+              const Text(
+                '晃晃每日推荐',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+          ListView.builder(
+            itemBuilder: (context, idx) {
+              return Container(
+                margin: EdgeInsets.all(5),
+                constraints: BoxConstraints.expand(
+                    width: screenUtil.setWidth(100),
+                    height: screenUtil.setHeight(300)),
+                child: Flex(
+                  direction: Axis.vertical,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Image.network(
+                        'https://cn.bing.com/th?id=OHR.WoodLine_EN-CN1496881410_800x480.jpg',
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        direction: Axis.horizontal,
+                        children: [
+                          Text(
+                            "￥10",
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize: screenUtil.setSp(25),
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "￥20",
+                            style: TextStyle(
+                              decoration: TextDecoration.lineThrough,
+                              color: Colors.grey,
+                              fontSize: screenUtil.setSp(20),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+            scrollDirection: Axis.horizontal,
+            itemCount: 6,
+          )
+        ],
+      ),
+    );
   }
 }
 

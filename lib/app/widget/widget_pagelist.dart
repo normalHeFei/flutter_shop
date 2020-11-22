@@ -15,7 +15,7 @@ typedef ApiParamBuilder = Map<String, dynamic> Function(
     SortParam currSortParam, int pageNo);
 
 ///列表头
-typedef BarBuilder = PreferredSizeWidget Function();
+typedef BarBuilder =PreferredSizeWidget Function();
 
 EventBus es = EventBus();
 ScreenUtil screenUtil = ScreenUtil();
@@ -93,19 +93,21 @@ class WidgetPageView extends StatefulWidget {
 
   final BarBuilder barBuilder;
 
-  WidgetPageView(
-    this.identify, {
+  WidgetPageView(this.identify, {
     this.apiMethod,
     this.apiParamBuilder,
     this.listItemBuilder,
     this.initSortParams,
     this.barBuilder,
-  })  : assert(listItemBuilder != null),
-        assert(apiMethod != null){
-     if(initSortParams != null && barBuilder != null){
-       throw new Exception('initSortParams，barBuilder 不可同时赋值');
+  })
+      : assert(listItemBuilder != null),
+        assert(apiMethod != null)
+  {
+     if(initSortParams != null  && barBuilder != null){
+         throw new Exception('initSortParams, barBuilder 提供一个即可');
      }
   }
+
 
 
   @override
@@ -181,16 +183,16 @@ class _WidgetPageViewState extends State<WidgetPageView> {
       body: _loading || _items.isEmpty
           ? WidgetProgress('正在加载')
           : RefreshIndicator(
-              child: ListView.builder(
-                itemBuilder: (context, idx) {
-                  return widget.listItemBuilder(_items[idx], context);
-                },
-                itemCount: _items.length,
-                controller: _scrollController,
-                physics: AlwaysScrollableScrollPhysics(),
-              ),
-              onRefresh: _handleRefresh,
-            ),
+        child: ListView.builder(
+          itemBuilder: (context, idx) {
+            return widget.listItemBuilder(_items[idx], context);
+          },
+          itemCount: _items.length,
+          controller: _scrollController,
+          physics: AlwaysScrollableScrollPhysics(),
+        ),
+        onRefresh: _handleRefresh,
+      ),
     );
   }
 
@@ -281,9 +283,9 @@ class _WidgetSortBarState extends State<_WidgetSortBar> {
         child: GestureDetector(
           child: Align(
               child: Text(
-            sortParam.name,
-            style: selectedStyle,
-          )),
+                sortParam.name,
+                style: selectedStyle,
+              )),
           onTap: () {
             _doOnTap(sortParam);
           },
