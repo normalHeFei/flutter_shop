@@ -69,4 +69,8 @@ class Api {
   Future pageQueryRecommendGoods(Map<String, dynamic> param) async {
     return _invoke('shop/pageQueryRecommendGoods');
   }
+
+  Future queryDailyGoods(Map<String, dynamic> param) async {
+    return _invoke('shop/queryDailyGoods');
+  }
 }

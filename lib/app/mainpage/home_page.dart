@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zdk_app/app/common/api.dart';
 import 'package:zdk_app/app/mainpage/search_page.dart';
 import 'package:zdk_app/app/widget/widget_fake_search.dart';
+import 'package:zdk_app/app/widget/widget_future.dart';
 import 'package:zdk_app/app/widget/widget_pagelist.dart';
 import 'package:zdk_app/app/widget/widget_search.dart';
 
@@ -28,7 +29,9 @@ class _HomePageState extends State<HomePage> with ListItemBuilderMixin {
             showSearch(
                 context: context,
                 delegate: WidgetSearch((query) {
-                  var curr = CurrTab.getInstance().curr;
+                  var curr = CurrTab
+                      .getInstance()
+                      .curr;
 
                   /// 创建搜索结果页
                   return WidgetPageView(
@@ -38,7 +41,9 @@ class _HomePageState extends State<HomePage> with ListItemBuilderMixin {
                       SortParam('销量', supportSort: true, desc: true),
                       SortParam('价格', supportSort: true, desc: false),
                     ],
-                    apiMethod: Api.getInstance().pageQueryByKw,
+                    apiMethod: Api
+                        .getInstance()
+                        .pageQueryByKw,
                     apiParamBuilder: (sortParam, pageNo) {
                       if (sortParam == null) {
                         sortParam = SortParam('综合');
@@ -82,12 +87,14 @@ class WidgetCustomScrollBodyState extends State<WidgetCustomScrollBody>
     with ListItemBuilderMixin, AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return CustomScrollView(
       slivers: [
+
         ///  动态配置内容
         SliverFixedExtentList(
           delegate:
-              SliverChildBuilderDelegate((BuildContext context, int index) {
+          SliverChildBuilderDelegate((BuildContext context, int index) {
             return Container(
               constraints: BoxConstraints.expand(
                   width: ScreenUtil.screenWidth,
@@ -100,18 +107,42 @@ class WidgetCustomScrollBodyState extends State<WidgetCustomScrollBody>
           itemExtent: screenUtil.setHeight(200),
         ),
 
+        /// 晃晃整理头部
+        SliverFixedExtentList(
+          delegate:
+          SliverChildBuilderDelegate((BuildContext context, int index) {
+            return Wrap(
+              direction: Axis.horizontal,
+              children: [
+                Icon(
+                  Icons.favorite_border,
+                  color: Colors.deepOrange,
+                ),
+                const Text(
+                  '晃晃每日推荐',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                )
+              ],
+            );
+          }, childCount: 1),
+          itemExtent: screenUtil.setHeight(30),
+        ),
+
         /// 晃晃整理
         SliverFixedExtentList(
           delegate: SliverChildBuilderDelegate((BuildContext context, int idx) {
-            return WidgetDailyGoods();
+            return WidgetFuture(
+                buildDailyGoodsItem, Api.getInstance().queryDailyGoods({}));
           }, childCount: 1),
-          itemExtent: screenUtil.setHeight(300),
+          itemExtent: screenUtil.setHeight(200),
         ),
 
         /// 每日推荐
         SliverFillRemaining(
           child: WidgetPageView('fromHome',
-              apiMethod: Api.getInstance().pageQueryRecommendGoods,
+              apiMethod: Api
+                  .getInstance()
+                  .pageQueryRecommendGoods,
               listItemBuilder: buildListItem,
               barBuilder: _buildListTitle),
         )
@@ -125,80 +156,69 @@ class WidgetCustomScrollBodyState extends State<WidgetCustomScrollBody>
 
   @override
   bool get wantKeepAlive => true;
+
+  Widget buildDailyGoodsItem(dynamic items) {
+    return Container(
+      constraints: BoxConstraints.expand(
+          width: screenUtil.setWidth(200), height: 200),
+      child: ,
+    );
+  }
 }
 
 class WidgetDailyGoods extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints.expand(
-          width: ScreenUtil.screenWidth, height: screenUtil.setHeight(310)),
-      child: Wrap(
-        direction: Axis.vertical,
-        children: [
-          Wrap(
-            direction: Axis.horizontal,
-            children: [
-              Icon(
-                Icons.favorite_border,
-                color: Colors.deepOrange,
-              ),
-              const Text(
-                '晃晃每日推荐',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
-          ListView.builder(
-            itemBuilder: (context, idx) {
-              return Container(
-                margin: EdgeInsets.all(5),
-                constraints: BoxConstraints.expand(
-                    width: screenUtil.setWidth(100),
-                    height: screenUtil.setHeight(300)),
-                child: Flex(
-                  direction: Axis.vertical,
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Image.network(
-                        'https://cn.bing.com/th?id=OHR.WoodLine_EN-CN1496881410_800x480.jpg',
-                      ),
+        constraints: BoxConstraints.expand(
+            width: ScreenUtil.screenWidth, height: screenUtil.setHeight(310)),
+        child: ListView.builder(
+          itemBuilder: (context, idx) {
+            return Container(
+              margin: EdgeInsets.all(5),
+              constraints: BoxConstraints.expand(
+                  width: screenUtil.setWidth(100),
+                  height: screenUtil.setHeight(300)),
+              child: Flex(
+                direction: Axis.vertical,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Image.network(
+                      'https://cn.bing.com/th?id=OHR.WoodLine_EN-CN1496881410_800x480.jpg',
                     ),
-                    Expanded(
-                      flex: 1,
-                      child: Wrap(
-                        alignment: WrapAlignment.center,
-                        direction: Axis.horizontal,
-                        children: [
-                          Text(
-                            "￥10",
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize: screenUtil.setSp(25),
-                                fontWeight: FontWeight.bold),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      direction: Axis.horizontal,
+                      children: [
+                        Text(
+                          "￥10",
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontSize: screenUtil.setSp(25),
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "￥20",
+                          style: TextStyle(
+                            decoration: TextDecoration.lineThrough,
+                            color: Colors.grey,
+                            fontSize: screenUtil.setSp(20),
                           ),
-                          Text(
-                            "￥20",
-                            style: TextStyle(
-                              decoration: TextDecoration.lineThrough,
-                              color: Colors.grey,
-                              fontSize: screenUtil.setSp(20),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              );
-            },
-            scrollDirection: Axis.horizontal,
-            itemCount: 6,
-          )
-        ],
-      ),
-    );
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+          scrollDirection: Axis.horizontal,
+          itemCount: 6,
+        ));
   }
 }
 
