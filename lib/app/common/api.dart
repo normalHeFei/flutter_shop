@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 class Api {
   static Api _instance;
   Dio _dio;
-  static const String baseUrl = 'http://172.16.3.5:8080/';
+  static const String baseUrl = 'http://192.168.8.112:8080/';
 
   Api._internal(this._dio);
 

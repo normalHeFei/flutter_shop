@@ -101,10 +101,13 @@ class WidgetPageView extends StatefulWidget {
     this.barBuilder,
   })
       : assert(listItemBuilder != null),
-        assert(apiMethod != null),
+        assert(apiMethod != null)
+  {
+     if(initSortParams != null  && barBuilder != null){
+         throw new Exception('initSortParams, barBuilder 提供一个即可');
+     }
+  }
 
-  ///排序列表 和 表头不可都有
-        assert(initSortParams != null && barBuilder != null)
 
 
   @override
